@@ -8,8 +8,13 @@ const musicianRoutes = require('./routes/musician');
 const app = express();
 const port = process.env.PORT || 3001;
 
-// include routes
-app.use('/musician', musicianRoutes);
+// Health check route pointing to the application
+app.get('/musician', (req, res) => {
+  res.status(200).json({ status: 'OK', message: 'Health check passed' });
+});
+
+// Include routes
+app.use('/musician/api', musicianRoutes);
 
 app.use(express.static('public'));
 
@@ -18,12 +23,12 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'client/build/index.html'));
 });
 
-// initialize store
+// Initialize store
 const musician = new Musician(store);
 musician.initStore(initialStoreData);
 app.locals.musician = musician;
 
-// start server
+// Start server
 const server = app.listen(port, () => {
   console.log("Server started on port " + port);
 });
